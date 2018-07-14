@@ -49,7 +49,7 @@ contract Life{
 		if(recipientList[_id].matchedTemp){
 			return "A match has been found. The donor will contact you shortly.";
 		} else{
-			return "Match not found."
+			return "Match not found.";
 		}
 	}
 
@@ -57,11 +57,9 @@ contract Life{
 		require(donorList[_id].donorAddress == msg.sender);
 		string result;
 		if(donorList[_id].matchedTemp){
-			result= "A match found. Please contact the hospital at this email:"+ recipientList[donorList[_id].matchIdR].emailHospital;
-		}else{
-			result ="Match not found";	
+			return result=  recipientList[donorList[_id].matchIdR].emailHospital;
 		}
-		return result;
+		return "Match not found";
 	}
 
 	// Blood match basis: O(O) AB(all) A(A,O) B(B,O)
