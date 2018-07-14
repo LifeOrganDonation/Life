@@ -1,15 +1,20 @@
 pragma solidity ^0.4.20;
 
 contract Life{
-
+	uint lastRank;
+	uint lasDonorId;
+	uint lastRecipientId;
 	struct request{
 		bool matchedTemp;
 		bool matchedFinal;
 		uint id;
 		uint rank;
+		uint bloodType;// 1-A, 2-B, 3-AB, 4-O
+		uint rhFactor;
 		string hospitalName;
 		address requestingHospital;
 		string emailHospital;
+		uint matchIdD;
 	}
 	struct donor{
 		bool matchedTemp;
@@ -18,6 +23,7 @@ contract Life{
 		address donorAddress;
 		uint bloodType;// 1-A, 2-B, 3-AB, 4-O
 		uint rhFactor; //1:+, 2:-
+		uint matchIdR;
 	}
 
 	mapping (uint => request) recipientList; 
@@ -65,6 +71,7 @@ contract Life{
 		}	
 		if(matchFound){
 			recipientList[id].matchedTemp = true;
+			//recipientList[id].matchIdD = _id;
 		}
 		return id;
 	}
@@ -102,15 +109,31 @@ contract Life{
 		return id;
 	}
 	//movedownbyrankone()
-	function pushUpRecipient(uint _id) internal{
+	function pushUpRecipients(uint _id) internal{
 		for(uint i= _id+1; i<=recipientList; i++){
 			if(!recipientList[i].matchedFinal){
 				recipientList[i].rank--;
 			}
 		}
+		lastRank--;
+	}
+	//
+	function rejectDonor(uint _idDonor){
+		require(recipientList[donorList[_idDonor].matchIdR].requestingHospital == msg.sender);
+		donorList[_idDonor].matchedTemp = false;
+		recipientList[donorList[_idDonor].matchIdR].matchedTemp = false;
+		recipientList[donorList[_idDonor].matchIdR].matchIdD = 0;
+		donorList[_idDonor].matchIdR= 0;
+
 	}
 
-	function rejectDonor(){
-		
+	//acceptDonor for the hospital to accept the match given. This results in final match for both caseid in recipientList and donor. 
+	//Also it pushes everyones rank below the id of recipientList
+	function acceptDonor(uint _idDonor){
+		uint matchedReceipient = donorList[_idDonor].matchIdR;
+		require(recipientList[matchedReceipient].requestingHospital == msg.sender);
+		donorList[_idDonor].matchedFinal = true;
+		recipientList[matchedReceipient].matchedFinal = true;
+		pushUpRecipients(matchedReceipient);
 	}
 }
