@@ -44,14 +44,24 @@ contract Life{
         return recipientList[id].rank;
     }
 
-	function getStatusRequest(uint _id) public returns(bool){
+	function getStatusRequest(uint _id) public returns(string){
 		require(recipientList[_id].requestingHospital == msg.sender);
-		return recipientList[_id].matchedTemp;
+		if(recipientList[_id].matchedTemp){
+			return "A match has been found. The donor will contact you shortly.";
+		} else{
+			return "Match not found."
+		}
 	}
 
-	function getStatusDonor(uint _id) public returns(bool){
+	function getStatusDonor(uint _id) public returns(string){
 		require(donorList[_id].donorAddress == msg.sender);
-		return donorList[_id].matchedTemp;
+		string result;
+		if(donorList[_id].matchedTemp){
+			result= "A match found. Please contact the hospital at this email:"+ recipientList[donorList[_id].matchIdR].emailHospital;
+		}else{
+			result ="Match not found";	
+		}
+		return result;
 	}
 
 	// Blood match basis: O(O) AB(all) A(A,O) B(B,O)
