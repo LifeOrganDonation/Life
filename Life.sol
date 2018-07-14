@@ -133,6 +133,7 @@ contract Life{
 		uint matchedReceipient = donorList[_idDonor].matchIdR;
 		require(recipientList[matchedReceipient].requestingHospital == msg.sender);
 		donorList[_idDonor].matchedFinal = true;
+		recipientList[matchedReceipient].rank =0;
 		recipientList[matchedReceipient].matchedFinal = true;
 		pushUpRecipients(matchedReceipient);
 	}
